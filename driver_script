@@ -1,6 +1,6 @@
 # Load GEO IDs from metadata file
 library(tidyverse)
-
+dataset_meta <- read.csv("dataset_meta.csv")
   geo_ids <- read.csv("dataset_meta.csv") %>%
   pull(GEO.Dataset.ID) %>%
   unique()
