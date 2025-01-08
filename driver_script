@@ -1,6 +1,13 @@
 # Load GEO IDs from metadata file
 library(tidyverse)
 dataset_meta <- read.csv("dataset_meta.csv")
+dataset_meta <- dataset_meta %>%
+  mutate(
+    Sample_IDs = strsplit(`Relevant.Sample.IDs`, ","),
+    Control_Treatment = strsplit(`Control.Treatment`, ","),
+  ) %>%
+  unnest(cols = c(Sample_IDs, Control_Treatment)) %>%
+  select(-`Relevant.Sample.IDs`, -`Control.Treatment`)
   geo_ids <- read.csv("dataset_meta.csv") %>%
   pull(GEO.Dataset.ID) %>%
   unique()
