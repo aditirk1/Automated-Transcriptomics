@@ -40,7 +40,7 @@ create_deseq_formula <- function(meta) {
   return(formula)
 }
 
-process_gse <- function(gse_id, complete_meta) {
+process_gse <- function(gse_id, dataset_meta) {
   print(paste("Processing GEO ID:", gse_id))
   
   # Create a folder for this specific GSE ID if it doesn't exist
@@ -50,7 +50,7 @@ process_gse <- function(gse_id, complete_meta) {
   }
   
   # Step 1: Load Metadata
-  meta <- complete_meta %>% 
+  meta <- dataset_meta %>% 
     filter(GSE.ID == gse_id) %>% 
     tibble::column_to_rownames(var = "Sample.ID")
   
@@ -73,7 +73,7 @@ process_gse <- function(gse_id, complete_meta) {
   # Step 5: Dynamic DESeq2 formula creation
   deseq_formula <- create_deseq_formula(meta_filtered)
   
-  if (all(complete_meta$single.timecourse[complete_meta$GSE.ID == gse_id] == "single")) {
+  if (all(dataset_meta$single.timecourse[dataset_meta$GSE.ID == gse_id] == "single")) {
     # Design for single condition
     dds <- DESeqDataSetFromMatrix(
       countData = counts_filtered, 
@@ -111,7 +111,7 @@ process_gse <- function(gse_id, complete_meta) {
     
   } 
   
-  if (all(complete_meta$single.timecourse[complete_meta$GSE.ID == gse_id] == "timecourse")) {
+  if (all(dataset_meta$single.timecourse[dataset_meta$GSE.ID == gse_id] == "timecourse")) {
     # Convert all columns to factors
     for (col in names(meta_filtered)){
       meta_filtered[[col]] <- factor(meta_filtered[[col]])
